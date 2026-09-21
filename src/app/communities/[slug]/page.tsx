@@ -3,6 +3,10 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Users, Calendar, MessageSquare } from "lucide-react";
 
+export async function generateStaticParams() {
+  return [{ slug: "welcome" }];
+}
+
 export default async function CommunityDetailPage({
   params,
 }: {

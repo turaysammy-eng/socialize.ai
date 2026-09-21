@@ -1,7 +1,10 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Github, Globe, Users, MessageSquare, Shield, Tag } from "lucide-react";
+import { Globe, GitFork, Calendar } from "lucide-react";
+
+export async function generateStaticParams() {
+  return [{ slug: "welcome" }];
+}
 
 export default async function ProjectDetailPage({
   params,
@@ -26,12 +29,8 @@ export default async function ProjectDetailPage({
     name: string;
     slug: string;
     description: string;
-    repository_url: string;
-    website_url: string;
-    license: string;
-    status: string;
-    primary_language: string;
-    topics: string[];
+    repository_url?: string;
+    website_url?: string;
     created_at: string;
   };
 
@@ -41,54 +40,44 @@ export default async function ProjectDetailPage({
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-extrabold text-white">{project.name}</h1>
-            <p className="text-gray-400 text-sm">Created {new Date(project.created_at).toLocaleDateString()}</p>
+            <p className="text-gray-400 text-sm">p/{project.slug}</p>
           </div>
-          <span className="px-3 py-1 bg-green-950 text-green-400 text-xs font-semibold rounded-full border border-green-800 uppercase tracking-wider">
-            {project.status.replace(/_/g, " ")}
-          </span>
+          <div className="flex items-center gap-3">
+            <button className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-medium text-sm rounded-xl transition-colors">
+              Request Collaboration
+            </button>
+          </div>
         </div>
 
         <p className="text-gray-300 text-base leading-relaxed">{project.description}</p>
 
-        <div className="flex flex-wrap gap-4 text-sm text-gray-300 pt-4 border-t border-gray-800">
+        <div className="flex flex-wrap items-center gap-6 text-sm text-gray-400 pt-4 border-t border-gray-800">
           {project.repository_url && (
-            <a href={project.repository_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg border border-gray-700 transition-colors">
-              <Github className="h-4 w-4" /> Repository
+            <a
+              href={project.repository_url}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-1.5 hover:text-white"
+            >
+              <GitFork className="h-4 w-4 text-purple-400" />
+              <span>Repository</span>
             </a>
           )}
           {project.website_url && (
-            <a href={project.website_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg border border-gray-700 transition-colors">
-              <Globe className="h-4 w-4" /> Website
+            <a
+              href={project.website_url}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-1.5 hover:text-white"
+            >
+              <Globe className="h-4 w-4 text-purple-400" />
+              <span>Website</span>
             </a>
           )}
-          <Link href={`/projects/${project.slug}/members`} className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg border border-gray-700 transition-colors">
-            <Users className="h-4 w-4" /> Team Members
-          </Link>
-          <Link href={`/projects/${project.slug}/discussions`} className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg border border-gray-700 transition-colors">
-            <MessageSquare className="h-4 w-4" /> Discussions
-          </Link>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-6 text-xs text-gray-400 pt-4 border-t border-gray-800">
-          {project.primary_language && (
-            <span className="flex items-center gap-1 font-medium text-gray-300">
-              Language: {project.primary_language}
-            </span>
-          )}
-          {project.license && (
-            <span className="flex items-center gap-1">
-              <Shield className="h-3.5 w-3.5 text-gray-500" /> License: {project.license}
-            </span>
-          )}
-          {project.topics && project.topics.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2">
-              {project.topics.map((topic) => (
-                <span key={topic} className="px-2 py-0.5 bg-gray-800 text-gray-300 rounded border border-gray-700 flex items-center gap-1">
-                  <Tag className="h-3 w-3 text-gray-500" /> {topic}
-                </span>
-              ))}
-            </div>
-          )}
+          <div className="flex items-center gap-1.5">
+            <Calendar className="h-4 w-4 text-gray-500" />
+            <span>Created {new Date(project.created_at).toLocaleDateString()}</span>
+          </div>
         </div>
       </div>
     </main>
