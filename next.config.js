@@ -1,4 +1,9 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  output: process.env.GITHUB_PAGES === 'true' ? 'export' : undefined,
+  images: {
+    unoptimized: true,
+  },
+};
 
 export default nextConfig;

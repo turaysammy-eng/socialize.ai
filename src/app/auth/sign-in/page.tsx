@@ -1,7 +1,18 @@
+"use client";
+
 import Link from "next/link";
-import { signInAction } from "@/features/auth/actions";
+import { createClient } from "@/lib/supabase/client";
 
 export default function SignInPage() {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const supabase = createClient();
+    await supabase.auth.signInWithPassword({ email, password });
+  };
+
   return (
     <div className="flex-1 flex items-center justify-center p-6">
       <div className="w-full max-w-md p-8 rounded-2xl bg-gray-900 border border-gray-800 space-y-6">
@@ -10,7 +21,7 @@ export default function SignInPage() {
           <p className="text-sm text-gray-400">Enter your credentials to access your developer account</p>
         </div>
 
-        <form action={signInAction} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="email">
               Email Address
