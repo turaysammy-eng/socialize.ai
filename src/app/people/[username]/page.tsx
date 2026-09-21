@@ -1,8 +1,12 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { MapPin, Globe, Github, Calendar } from "lucide-react";
+import { Github, Globe, MapPin, Calendar } from "lucide-react";
 
-export default async function ProfilePage({
+export async function generateStaticParams() {
+  return [{ username: "demo" }];
+}
+
+export default async function UserProfilePage({
   params,
 }: {
   params: Promise<{ username: string }>;
@@ -21,45 +25,42 @@ export default async function ProfilePage({
   }
 
   const profile = profileData as {
+    id: string;
     username: string;
     display_name: string;
-    bio: string;
-    location: string;
-    website_url: string;
-    github_url: string;
-    skills: string[];
-    experience_level: string;
+    bio?: string;
+    location?: string;
+    website?: string;
+    github_url?: string;
     created_at: string;
   };
 
   return (
-    <main className="flex-1 p-6 md:p-10 max-w-4xl mx-auto space-y-8 w-full">
+    <main className="flex-1 p-6 md:p-10 space-y-8 max-w-4xl mx-auto w-full">
       <div className="p-8 rounded-2xl bg-gray-900 border border-gray-800 space-y-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-extrabold text-white">{profile.display_name}</h1>
-            <p className="text-gray-400">@{profile.username}</p>
+        <div className="flex items-center gap-6">
+          <div className="h-20 w-20 rounded-full bg-purple-600/20 text-purple-400 font-bold text-3xl flex items-center justify-center border border-purple-500/30">
+            {profile.display_name[0]?.toUpperCase() || profile.username[0]?.toUpperCase()}
           </div>
-          <span className="px-3 py-1 bg-blue-950 text-blue-400 text-xs font-semibold rounded-full border border-blue-800 uppercase tracking-wider">
-            {profile.experience_level}
-          </span>
+          <div>
+            <h1 className="text-2xl font-bold text-white">{profile.display_name}</h1>
+            <p className="text-purple-400 text-sm">@{profile.username}</p>
+          </div>
         </div>
 
-        {profile.bio && (
-          <p className="text-gray-300 text-base">{profile.bio}</p>
-        )}
+        {profile.bio && <p className="text-gray-300 text-sm leading-relaxed">{profile.bio}</p>}
 
-        <div className="flex flex-wrap gap-4 text-sm text-gray-400 pt-2 border-t border-gray-800">
+        <div className="flex flex-wrap items-center gap-6 text-sm text-gray-400 pt-4 border-t border-gray-800">
           {profile.location && (
             <div className="flex items-center gap-1.5">
               <MapPin className="h-4 w-4 text-gray-500" />
               <span>{profile.location}</span>
             </div>
           )}
-          {profile.website_url && (
-            <a href={profile.website_url} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:text-white">
+          {profile.website && (
+            <a href={profile.website} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:text-white">
               <Globe className="h-4 w-4 text-gray-500" />
-              <span>Website</span>
+              <span>{profile.website}</span>
             </a>
           )}
           {profile.github_url && (
@@ -73,19 +74,6 @@ export default async function ProfilePage({
             <span>Joined {new Date(profile.created_at).toLocaleDateString()}</span>
           </div>
         </div>
-
-        {profile.skills && profile.skills.length > 0 && (
-          <div className="space-y-2 pt-2 border-t border-gray-800">
-            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Skills & Technologies</h2>
-            <div className="flex flex-wrap gap-2">
-              {profile.skills.map((skill: string) => (
-                <span key={skill} className="px-2.5 py-1 bg-gray-800 text-gray-300 text-xs rounded-md border border-gray-700">
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </main>
   );
